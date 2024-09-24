@@ -1,0 +1,82 @@
+# Entornos virtuales
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+
+# Archivos de configuración del entorno
+*.env
+.env.*
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de bases de datos SQLite
+*.sqlite3
+*.db
+
+# Archivos de configuración de Flask
+instance/
+config.py
+*.log
+
+# Archivos de distribuciones de Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+
+# Archivos de editor y de sistema
+*.swp
+*.swo
+*.DS_Store
+*.sublime-workspace
+*.sublime-project
+
+# PyInstaller
+#  Los archivos generados por PyInstaller al convertir el proyecto en un ejecutable
+/build/
+dist/
+*.spec
+
+# Logs y reportes
+*.log
+*.pid
+*.out
+*.err
+
+# Coverage (pruebas unitarias)
+htmlcov/
+.coverage
+.coverage.*
+
+# Reportes de prueba de unittest y pytest
+*.cover
+.tox/
+.nox/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# IDEs/editores
+.idea/
+.vscode/
+*.iml
+
+# Docker
+*.dockerignore
+docker-compose.yml
+
+# Node modules si usas npm para frontend
+node_modules/
