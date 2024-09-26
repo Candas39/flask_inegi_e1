@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con Entradas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            margin-left: 10px;
+        }
+        .input-group input {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+	<h1> Introduce los datos para ver establecimientos de INEGI </h1>
+    <form id="inegi_Respuesta" action="/tabla" method="GET">
+        <label for="tipo">Tipo de Establecimiento:</label>
+        <input type="text" id="tipo" name="tipo_establecimiento" class="clase-input"><br><br>
+        <label for="coordenadas">Coordenadas:</label>
+        <input type="text" id="coordenadas" name="coordenadas" class="clase-input"><br><br>
+        <label for="radio">Radio:</label>
+        <input type="number" id="radio" name="radio" class="clase-input"><br><br>
+        <button type="submit" onclick="enviarDatos()">Enviar</button>
+    </form>
+    <script>
+        function enviarDatos() {
+            const tipo_establecimiento = document.getElementById('tipo').value;
+            const coordenadas = document.getElementById('coordenadas').value;
+            const radio = document.getElementById('radio').value;
+
+            const data = {
+                tipo_establecimiento: tipo_establecimiento,
+                coordenadas: coordenadas,
+                radio: radio
+            };
+
+            fetch('/tabla', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respuesta:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
