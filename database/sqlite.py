@@ -47,6 +47,7 @@ def filter_data(palabra_clave):
     query = "SELECT * FROM establecimientos WHERE nombre LIKE ?"
     cursor.execute(query, ('%' + palabra_clave + '%',))
     resultados = cursor.fetchall()
+    print(resultados)
     conn.close()
     columnas = [desc[0] for desc in cursor.description]
     data = [dict(zip(columnas, fila)) for fila in resultados]

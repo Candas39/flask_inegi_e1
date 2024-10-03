@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla Paginada</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Tabla Paginada</h2>
+    
+    <table id="miTabla">
+        <thead>
+            <tr>
+                <th>CLEE</th>
+                <th>Nombre</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas de la tabla se generarán dinámicamente -->
+        </tbody>
+    </table>
+    
+    <div class="pagination" id="pagination"></div>
+    
+    <script>
+        const filasPorPagina = 20;
+        let paginaActual = 1;
+        let datos = [];
+
+        // Función para obtener los datos de Flask
+        function obtenerDatos() {
+            fetch('/tabla?json=1')
+                .then(response => response.json())
+                .then(data => {
+                    datos = data;
+                    renderizarTabla(datos, paginaActual);
+                    renderizarPaginacion(datos.length, filasPorPagina);
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+        }
+
+        // Función para renderizar la tabla
+        function renderizarTabla(datos, pagina) {
+            const tablaBody = document.querySelector('#miTabla tbody');
+            tablaBody.innerHTML = '';  // Limpiar las filas previas
+
+            // Calcular el índice de inicio y fin para los datos de la página actual
+            const inicio = (pagina - 1) * filasPorPagina;
+            const fin = inicio + filasPorPagina;
+            const datosPaginados = datos.slice(inicio, fin);
+
+            // Generar las filas de la tabla
+            datosPaginados.forEach(dato => {
+                const fila = `
+                    <tr>
+                        <td>${dato.CLEE}</td>
+                        <td>${dato.Latitud}</td>
+                        <td>${dato.Longitud}</td>
+                        <td>${dato.Nombre}</td>
+                    </tr>
+                `;
+                tablaBody.insertAdjacentHTML('beforeend', fila);
+            });
+        }
+
+        // Función para renderizar los botones de paginación
+        function renderizarPaginacion(totalDatos, filasPorPagina) {
+            const totalPaginas = Math.ceil(totalDatos / filasPorPagina);
+            const paginationDiv = document.getElementById('pagination');
+            paginationDiv.innerHTML = '';
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const boton = document.createElement('button');
+                boton.textContent = i;
+                if (i === paginaActual) {
+                    boton.classList.add('active');
+                }
+
+                boton.addEventListener('click', () => {
+                    paginaActual = i;
+                    renderizarTabla(datos, paginaActual);
+                    renderizarPaginacion(totalDatos, filasPorPagina);
+                });
+
+                paginationDiv.appendChild(boton);
+            }
+        }
+
+        // Llamar a la función para obtener los datos y renderizar la tabla
+        obtenerDatos();
+    </script>
+
+</body>
+</html>

@@ -1,4 +1,5 @@
 import requests
+import json
 
 def get_info_inegi(tipo_establecimiento, coordenadas, radio):
     base_url = "https://www.inegi.org.mx/app/api/denue/v1/consulta/Buscar/{}/{}/{}/523a778b-026e-443c-85a6-fd5c619e4a5d"
@@ -12,6 +13,6 @@ def get_info_inegi(tipo_establecimiento, coordenadas, radio):
         try:
             return response.json()
         except ValueError:
-            return {"error": "La respuesta no contiene un JSON válido"}
+            return {"error": ValueError}
     else:
         return {"error": f"Error en la solicitud, código de estado: {response.status_code}"}
