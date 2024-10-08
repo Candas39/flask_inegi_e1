@@ -25,6 +25,36 @@
         .input-group input {
             flex-grow: 1;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -37,35 +67,117 @@
         <input type="text" id="coordenadas" name="coordenadas" class="clase-input"><br><br>
         <label for="radio">Radio:</label>
         <input type="number" id="radio" name="radio" class="clase-input"><br><br>
-        <button type="submit" onclick="enviarDatos()">Enviar</button>
+        <button type="submit" onclick="obtenerDatos()">Enviar</button>
     </form>
+
+    <h2>Tabla Paginada</h2>
+    
+    <table id="miTabla">
+        <thead>
+            <tr>
+                <th>CLEE</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas de la tabla se generarán dinámicamente -->
+        </tbody>
+        
+    </table>
+
+    <div class="pagination" id="pagination"></div>
+
     <script>
+        const filasPorPagina = 20;
+        let paginaActual = 1;
+        let datos = [];
+
         function enviarDatos() {
             const tipo_establecimiento = document.getElementById('tipo').value;
             const coordenadas = document.getElementById('coordenadas').value;
             const radio = document.getElementById('radio').value;
 
-            const data = {
+            const parametros = {
                 tipo_establecimiento: tipo_establecimiento,
                 coordenadas: coordenadas,
                 radio: radio
             };
+            return parametros
+        }
 
-            fetch('/tabla', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Respuesta:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+        // Función para obtener los datos de Flask
+        function obtenerDatos() {
+            const parametros = enviarDatos();
+            let baseUrl = "http://127.0.0.1:5000/tabla";
+            let urlParams = new URLSearchParams(parametros).toString();
+            let finalUrl = `${baseUrl}?${urlParams}`;
+
+            fetch(finalUrl',
+            { method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            } } )
+                .then(response => response.json())
+                .then(data => {
+                    datos = data;
+                    renderizarTabla(datos, paginaActual);
+                    renderizarPaginacion(datos.length, filasPorPagina);
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+        }
+
+        // Función para renderizar la tabla
+        function renderizarTabla(datos, pagina) {
+            const tablaBody = document.querySelector('#miTabla tbody');
+            tablaBody.innerHTML = '';  // Limpiar las filas previas
+
+            // Calcular el índice de inicio y fin para los datos de la página actual
+            const inicio = (pagina - 1) * filasPorPagina;
+            const fin = inicio + filasPorPagina;
+            const datosPaginados = datos.slice(inicio, fin);
+
+            // Generar las filas de la tabla
+            datosPaginados.forEach(dato => {
+                const fila = `
+                    <tr>
+                        <td>${dato.CLEE}</td>
+                        <td>${dato.Latitud}</td>
+                        <td>${dato.Longitud}</td>
+                        <td>${dato.Nombre}</td>
+                    </tr>
+                `;
+                tablaBody.insertAdjacentHTML('beforeend', fila);
             });
         }
+
+        // Función para renderizar los botones de paginación
+        function renderizarPaginacion(totalDatos, filasPorPagina) {
+            const totalPaginas = Math.ceil(totalDatos / filasPorPagina);
+            const paginationDiv = document.getElementById('pagination');
+            paginationDiv.innerHTML = '';
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const boton = document.createElement('button');
+                boton.textContent = i;
+                if (i === paginaActual) {
+                    boton.classList.add('active');
+                }
+
+                boton.addEventListener('click', () => {
+                    paginaActual = i;
+                    renderizarTabla(datos, paginaActual);
+                    renderizarPaginacion(totalDatos, filasPorPagina);
+                });
+
+                paginationDiv.appendChild(boton);
+            }
+        }  
+
+        // Llamar a la función para obtener los datos y renderizar la tabla
+
+
     </script>
 
 </body>

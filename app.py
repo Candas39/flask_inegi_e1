@@ -4,6 +4,7 @@ from database.sqlite import insert_data, filter_data
 
 
 
+
 app = Flask(__name__)
 
     
@@ -13,19 +14,15 @@ def index():
 
 @app.route('/tabla', methods=['GET','POST'])
 def index_tabla():
-        data = request.get_json()
-        tipo_establecimiento = data.get("tipo_establecimiento")
-        coordenadas = data.get("coordenadas")
-        radio = data.get("radio")
+        tipo_establecimiento = request.args.get("tipo_establecimiento")
+        coordenadas = request.args.get("coordenadas")
+        radio = request.args.get("radio")
+        print(tipo_establecimiento, radio, coordenadas)
         datos = get_info_inegi(tipo_establecimiento, coordenadas, radio)
         print(type(datos), datos[0])
-        datos = [
-        {"CLEE": i, "Latitud": f"19.{i}", "Longitud": f"-99.{i}", "Nombre": f"Establecimiento {i}"}
-        for i in range(1, 101)
-        ]
         if request.args.get("json"):
             return jsonify(datos)    
-        return render_template('table.html', datos = datos)
+        return render_template('index.html', datos = datos)
 
 @app.route('/buscar_establecimientos', methods=['POST'])
 def buscar_establecimientos():

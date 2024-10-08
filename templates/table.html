@@ -43,14 +43,15 @@
         <thead>
             <tr>
                 <th>CLEE</th>
-                <th>Nombre</th>
                 <th>Latitud</th>
                 <th>Longitud</th>
+                <th>Nombre</th>
             </tr>
         </thead>
         <tbody>
             <!-- Las filas de la tabla se generarán dinámicamente -->
         </tbody>
+        
     </table>
     
     <div class="pagination" id="pagination"></div>
@@ -62,7 +63,11 @@
 
         // Función para obtener los datos de Flask
         function obtenerDatos() {
-            fetch('/tabla?json=1')
+            fetch('/tabla?json=1&tipo_establecimiento=restaurantes&coordenadas=21.014798924198523,-101.25437798091887&radio=2000',
+            { method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            } } )
                 .then(response => response.json())
                 .then(data => {
                     datos = data;
