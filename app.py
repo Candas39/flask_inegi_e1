@@ -20,9 +20,15 @@ def index_tabla():
         print(tipo_establecimiento, radio, coordenadas)
         datos = get_info_inegi(tipo_establecimiento, coordenadas, radio)
         print(type(datos), datos[0])
+        json_data= {
+            "tipo_establecimiento":tipo_establecimiento,
+            "coordenadas":coordenadas,
+            "radio":radio
+        }
         if request.args.get("json"):
             return jsonify(datos)    
-        return render_template('index.html', datos = datos)
+
+        return render_template('table.html', datos=datos, json_data=json_data)
 
 @app.route('/buscar_establecimientos', methods=['POST'])
 def buscar_establecimientos():

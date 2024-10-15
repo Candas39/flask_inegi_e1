@@ -63,7 +63,12 @@
 
         // Función para obtener los datos de Flask
         function obtenerDatos() {
-            fetch('/tabla?json=1&tipo_establecimiento=restaurantes&coordenadas=21.014798924198523,-101.25437798091887&radio=2000',
+            const parametros = "{{json_data}}";
+            console.log(parametros);
+            let baseUrl = "http://127.0.0.1:5000/tabla";
+            //let urlParams = new URLSearchParams(parametros).toString();
+            let finalUrl = "http://127.0.0.1:5000/tabla?json=1&tipo_establecimiento=restaurantes&coordenadas=21.014798924198523,-101.25437798091887&radio=2000" //`${baseUrl}?${urlParams}`;
+            fetch(finalUrl,
             { method: 'GET',
             headers: {
             'Content-Type': 'application/json',
@@ -71,10 +76,12 @@
                 .then(response => response.json())
                 .then(data => {
                     datos = data;
+                    console.log(data);
                     renderizarTabla(datos, paginaActual);
                     renderizarPaginacion(datos.length, filasPorPagina);
                 })
                 .catch(error => console.error('Error al obtener los datos:', error));
+        
         }
 
         // Función para renderizar la tabla
